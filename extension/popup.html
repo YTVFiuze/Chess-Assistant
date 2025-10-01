@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --primary-color: #2c3e50;
+      --secondary-color: #3498db;
+      --success-color: #2ecc71;
+      --danger-color: #e74c3c;
+      --warning-color: #f39c12;
+      --light-color: #ecf0f1;
+      --dark-color: #2c3e50;
+      --border-radius: 6px;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      width: 300px;
+      padding: 0;
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f8f9fa;
+      color: var(--dark-color);
+    }
+    
+    .container {
+      padding: 16px;
+    }
+    
+    .header {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 12px 16px;
+      text-align: center;
+      border-radius: var(--border-radius) var(--border-radius) 0 0;
+    }
+    
+    .header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      margin: 0;
+    }
+    
+    .status-container {
+      padding: 16px;
+      border-bottom: 1px solid #e9ecef;
+    }
+    
+    .status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    
+    .status.active {
+      background-color: rgba(46, 204, 113, 0.1);
+      color: var(--success-color);
+      border: 1px solid rgba(46, 204, 113, 0.3);
+    }
+    
+    .status.inactive {
+      background-color: rgba(231, 76, 60, 0.1);
+      color: var(--danger-color);
+      border: 1px solid rgba(231, 76, 60, 0.3);
+    }
+    
+    .status-icon {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    
+    .status-icon.active {
+      background-color: var(--success-color);
+      box-shadow: 0 0 8px var(--success-color);
+    }
+    
+    .status-icon.inactive {
+      background-color: var(--danger-color);
+    }
+    
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      margin: 8px 0;
+      border: none;
+      border-radius: var(--border-radius);
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: center;
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    .btn-primary {
+      background-color: var(--secondary-color);
+      color: white;
+    }
+    
+    .btn-primary:hover {
+      background-color: #2980b9;
+    }
+    
+    .btn-success {
+      background-color: var(--success-color);
+      color: white;
+    }
+    
+    .btn-danger {
+      background-color: var(--danger-color);
+      color: white;
+    }
+    
+    .btn-settings {
+      background-color: #95a5a6;
+      color: white;
+    }
+    
+    .btn-settings:hover {
+      background-color: #7f8c8d;
+    }
+    
+    .settings {
+      padding: 16px;
+      background-color: white;
+      border-radius: 0 0 var(--border-radius) var(--border-radius);
+      display: none;
+    }
+    
+    .settings.visible {
+      display: block;
+    }
+    
+    .setting-item {
+      display: flex;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .setting-item:last-child {
+      border-bottom: none;
+    }
+    
+    .setting-item input[type="checkbox"] {
+      margin-right: 10px;
+      width: 18px;
+      height: 18px;
+      cursor: pointer;
+    }
+    
+    .setting-item label {
+      font-size: 14px;
+      color: #34495e;
+      cursor: pointer;
+      flex-grow: 1;
+    }
+    
+    .debug-info {
+      margin-top: 12px;
+      padding: 8px;
+      background-color: #f8f9fa;
+      border-radius: var(--border-radius);
+      font-size: 12px;
+      color: #7f8c8d;
+      display: none;
+    }
+    
+    .version {
+      text-align: center;
+      font-size: 11px;
+      color: #95a5a6;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h2>Chess Move Assistant</h2>
+  </div>
+  
+  <div class="container">
+    <div id="status" class="status inactive">
+      <span class="status-icon"></span>
+      <span id="statusText">Connecting to chess.com...</span>
+    </div>
+    
+    <button id="toggleBtn" class="btn btn-primary">
+      <span id="toggleText">Activate Assistant</span>
+    </button>
+    
+    <button id="settingsBtn" class="btn btn-settings">
+      <span id="settingsText">Settings</span>
+    </button>
+    
+    <div id="debugInfo" class="debug-info">
+      <div>Board detected: <span id="boardStatus">No</span></div>
+      <div>Active tab: <span id="tabStatus">-</span></div>
+    </div>
+    
+    <div class="version">v1.0.1</div>
+  </div>
+  
+  <div id="settings" class="settings">
+    <div class="setting-item">
+      <input type="checkbox" id="showBrilliantOnly" checked>
+      <label for="showBrilliantOnly">Show only brilliant moves</label>
+    </div>
+    <div class="setting-item">
+      <input type="checkbox" id="showAllMoves" checked>
+      <label for="showAllMoves">Show top 3 moves</label>
+    </div>
+    <div class="setting-item">
+      <input type="checkbox" id="highlightBrilliant" checked>
+      <label for="highlightBrilliant">Highlight brilliant moves</label>
+    </div>
+    <div class="setting-item">
+      <input type="checkbox" id="enableDebug" id="enableDebug">
+      <label for="enableDebug">Enable debug mode</label>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
